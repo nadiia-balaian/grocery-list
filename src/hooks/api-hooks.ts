@@ -9,6 +9,7 @@ export const useGroceriesList = () => {
   const {data, isError, isLoading, isFetching, isPending} = useQuery<Item[]>({
     queryKey: [QueryKeys.GROCERIES_LIST],
     queryFn: getGroceriesList,
+    staleTime: 30000,
     refetchInterval: 30000,
   });
 
@@ -71,20 +72,23 @@ export const useUpdateGroceryItem = () => {
 export const useDeleteGroceryItem = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: deleteItemFromGroceriesList,
     onSuccess: (_, itemId: string) => {
       queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
-        if (!oldData) return;
+        const updatedItems = oldData.filter((item: Item) => item.id !== itemId);
 
-        // Filter out the deleted item from the existing list
-        const updatedItems = oldData.items.filter((item: Item) => item.id !== itemId);
-
-        return {
-          ...oldData,
-          items: updatedItems,
-        };
+        return [
+          ...updatedItems,
+        ];
       });
     },
   });
+
+  return {
+    deleteItem: mutation.mutate,
+    isLoading: mutation.isPending,
+    isError: mutation.isError || mutation.error,
+    isSuccess: mutation.isSuccess,
+  }
 };

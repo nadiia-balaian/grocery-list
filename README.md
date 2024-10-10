@@ -16,9 +16,13 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To run JSON server: 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash 
+npx json-server --watch server/db.json --port 8000
+```
+
+Add Item page was created just for showcase app routing. I would prefer to make add new item on the same page where there is a list.
 
 ## Learn More
 

@@ -30,7 +30,7 @@ export const GroceryList = () => {
       <List className="w-full max-h-full">
         {data?.map((item, index) => (
           <ListItem key={item.id} className="flex gap-4">
-            <div className="rounded-full bg-primary text-gray-50 w-[30px] h-[30px] flex items-center justify-center">{index + 1}</div> <Product data={item} />
+            <div className="rounded-full bg-primary text-gray-50 w-[30px] h-[30px] flex items-center justify-center">{index + 1}</div> <Product data={item} index={index} />
           </ListItem>
         ))}
       </List>
