@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider, useColorScheme } from "@mui/material/styles";
 import { Roboto } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import theme from "@/theme";
 import "./globals.css";
 import ReactQueryProvider from "@/utils/ReactQueryProvider";
-import { Footer } from "@/components/Footer";
 
 const roboto = Roboto({
 	weight: ["300", "400", "500", "700"],
@@ -29,13 +28,15 @@ export default function RootLayout({
 			<body
 				className={`${roboto.variable} antialiased`}
 			>
-				<ReactQueryProvider>
-					<AppRouterCacheProvider>
+
+				<AppRouterCacheProvider>
+					<ReactQueryProvider>
 						<ThemeProvider theme={theme}>
 							{children}
 						</ThemeProvider>
-					</AppRouterCacheProvider>
-				</ReactQueryProvider>
+					</ReactQueryProvider>
+				</AppRouterCacheProvider>
+
 			</body>
 		</html>
 	);

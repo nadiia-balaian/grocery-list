@@ -2,16 +2,22 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { addItemToGroceriesList, deleteItemFromGroceriesList, getGroceriesList, updateItemInGroceriesList } from '@/lib/api';
 import { QueryKeys } from '@/types/queryKeys';
-import { GetGroceriesListResponse } from '@/types/api';
 import { Item } from '@/types/groceries';
 
 // Hook to fetch the grocery list
 export const useGroceriesList = () => {
-  return useQuery<GetGroceriesListResponse>({
+  const {data, isError, isLoading, isFetching, isPending} = useQuery<Item[]>({
     queryKey: [QueryKeys.GROCERIES_LIST],
     queryFn: getGroceriesList,
     refetchInterval: 30000,
   });
+
+  return {
+    data,
+    isEmpty: !data || data.length === 0,
+    isLoading: isLoading || isPending || isFetching,
+    isError,
+  }
 };
 
 // Hook to add item to the grocery list
@@ -34,9 +40,8 @@ export const useAddGroceryItem = () => {
   return {
     addItem: mutation.mutate,
     isLoading: mutation.isPending,
-    isError: mutation.isError,
+    isError: mutation.isError || mutation.error,
     isSuccess: mutation.isSuccess,
-    error: mutation.error,
   };
 };
 

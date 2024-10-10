@@ -4,58 +4,64 @@
       "id": "b7f3e1d8-4d2c-11ec-81d3-0242ac130003",
       "name": "Milk",
       "amount": 2,
+      "isFood": true,
       "isPurchased": false
     },
     {
       "id": "d2b4d02a-4d2c-11ec-81d3-0242ac130003",
       "name": "Bread",
       "amount": 1,
+      "isFood": true,
       "isPurchased": true
     },
     {
       "id": "e4f74b1e-4d2c-11ec-81d3-0242ac130003",
       "name": "Apples",
       "amount": 6,
+      "isFood": true,
       "isPurchased": false
     },
     {
       "id": "f1a4e6de-4d2c-11ec-81d3-0242ac130003",
       "name": "Avocado",
       "amount": 3,
+      "isFood": true,
       "isPurchased": false
     },
     {
       "id": "02bfe3aa-4d2d-11ec-81d3-0242ac130003",
       "name": "Mango",
       "amount": 2,
+      "isFood": true,
       "isPurchased": true
     },
     {
       "id": "16a6c294-4d2d-11ec-81d3-0242ac130003",
       "name": "Toilet Paper",
       "amount": 5,
+      "isFood": false,
       "isPurchased": false
     },
     {
       "id": "29277b48-4d2d-11ec-81d3-0242ac130003",
       "name": "Cucumber",
       "amount": 4,
+      "isFood": true,
       "isPurchased": true
     },
     {
       "id": "3ccaa17c-4d2d-11ec-81d3-0242ac130003",
       "name": "Blueberry",
       "amount": 7,
+      "isFood": true,
       "isPurchased": false
     },
     {
       "id": "4290",
-      "item": {
-        "id": "062cd833-373b-4ff1-985c-0b219f4275d4",
-        "name": "tes",
-        "amount": 567,
-        "isPurchased": false
-      }
+      "name": "Soap",
+      "amount": 2,
+      "isFood": false,
+      "isPurchased": false
     }
   ]
 }
