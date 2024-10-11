@@ -22,6 +22,7 @@ const GroceriesPage = () => {
         flexDirection: 'column',
         maxWidth: '600px',
         margin: '0 auto',
+        paddingBottom: '50px'
       }}>
         <div className='flex justify-between items-center shadow-md mx-[-1rem] px-[1rem] pb-2 z-[1]'>
           <Typography variant='h4' className='text-primary'>My grocery list</Typography>

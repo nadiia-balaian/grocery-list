@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { addItemToGroceriesList, deleteItemFromGroceriesList, getGroceriesList, updateItemInGroceriesList } from '@/lib/api';
+import { addItemToGroceriesList, deleteItemFromGroceriesList, getGroceriesList, getGroceryItem, updateItemInGroceriesList } from '@/lib/api';
 import { QueryKeys } from '@/types/queryKeys';
 import { Item } from '@/types/groceries';
 
@@ -29,11 +29,10 @@ export const useAddGroceryItem = () => {
     mutationFn: addItemToGroceriesList,
     onSuccess: (newItem: Item) => {
       queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
-        const updatedItems = [...(oldData?.items || []), newItem];
-        return {
-          ...oldData,
-          items: updatedItems,
-        };
+        const updatedItems = [...oldData, newItem];
+        return [
+          ...updatedItems,
+        ];
       });
     },
   });
@@ -50,22 +49,30 @@ export const useAddGroceryItem = () => {
 export const useUpdateGroceryItem = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: updateItemInGroceriesList,
     onSuccess: (updatedItem: Item) => {
       queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
 
-        const updatedItems = oldData.items.map((item: Item) =>
+        const updatedItems = oldData.map((item: Item) =>
           item.id === updatedItem.id ? updatedItem : item
         );
 
-        return {
-          ...oldData,
-          items: updatedItems,
-        };
+        console.log(updatedItems)
+
+        return [
+          ...updatedItems
+        ];
       });
     },
   });
+
+  return {
+    updateItem: mutation.mutate,
+    isLoading: mutation.isPending,
+    isError: mutation.isError || mutation.error,
+    isSuccess: mutation.isSuccess,
+  }
 };
 
 // Hook to delete an item from the grocery list
@@ -74,7 +81,7 @@ export const useDeleteGroceryItem = () => {
 
   const mutation = useMutation({
     mutationFn: deleteItemFromGroceriesList,
-    onSuccess: (_, itemId: string) => {
+    onSuccess: (_, itemId: string, onSuccess) => {
       queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
         const updatedItems = oldData.filter((item: Item) => item.id !== itemId);
 
@@ -82,6 +89,7 @@ export const useDeleteGroceryItem = () => {
           ...updatedItems,
         ];
       });
+     
     },
   });
 
@@ -92,3 +100,18 @@ export const useDeleteGroceryItem = () => {
     isSuccess: mutation.isSuccess,
   }
 };
+
+export const useGetGroceryItem = (id: string) => {
+  const { data: item, isLoading, isPending, isFetching, error, isError } = useQuery<Item>({
+    queryKey: ['groceryItem', id],
+    queryFn: () => getGroceryItem(id),
+    enabled: !!id, // Only fetch if the ID is available
+  });
+
+
+  return {
+    item,
+    isLoading: isLoading || isFetching || isPending,
+    error: isError || error,
+  }
+}

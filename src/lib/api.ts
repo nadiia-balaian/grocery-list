@@ -2,12 +2,12 @@ import { BASE_URL } from "@/constants/default";
 import { Item } from "@/types/groceries";
 import exp from "constants";
 
-// TODO: add filtering by isPurchased or/and pagination
+// TODO: add filtering by isPurchased or/and pagination and sort by type/name
 export const getGroceriesList = async (): Promise<Item[]> => {
   return apiService.get('items');
 };
 
-export const getGroceryItem = async (itemId: number): Promise<Item> => {
+export const getGroceryItem = async (itemId: string): Promise<Item> => {
   return apiService.get(`items/${itemId}`);
 }
 
@@ -16,7 +16,7 @@ export const addItemToGroceriesList = async (newItem: Item): Promise<Item> => {
 }
 
 export const updateItemInGroceriesList = async (updatedItem: Item): Promise<Item> => {
-  return apiService.put(`items/${updatedItem.id}`, { item: updatedItem });
+  return apiService.put(`items/${updatedItem.id}`, { ...updatedItem });
 }
 
 export const deleteItemFromGroceriesList = async (itemId: string) => {

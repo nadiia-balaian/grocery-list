@@ -10,11 +10,13 @@ export const GroceryList = () => {
 
   const renderContent = () => {
     if (isLoading) {
-      return <CircularProgress aria-label="Loading items..." />;
+      return (
+        <CircularProgress aria-label="Loading items..." />
+      );
     }
 
     if (isError) {
-      return <Typography color="error" variant="h5">Error loading items. Please try again later.</Typography>
+      return <Typography color="error" variant="h5">Error loading items. Please try again later.</Typography>;
     }
 
     if (isEmpty) {
@@ -30,7 +32,8 @@ export const GroceryList = () => {
       <List className="w-full max-h-full">
         {data?.map((item, index) => (
           <ListItem key={item.id} className="flex gap-4">
-            <div className="rounded-full bg-primary text-gray-50 w-[30px] h-[30px] flex items-center justify-center">{index + 1}</div> <Product data={item} index={index} />
+            <div className="rounded-full bg-primary text-gray-50 w-[30px] h-[30px] flex items-center justify-center">{index + 1}</div>
+            <Product data={item} index={index} />
           </ListItem>
         ))}
       </List>
@@ -38,7 +41,7 @@ export const GroceryList = () => {
   };
 
   return (
-    <div className="min-w-full flex items-center justify-center flex-1 overflow-auto max-h-fit">
+    <div className="flex items-center justify-center w-full h-screen min-h-full overflow-auto">
       {renderContent()}
     </div>
   );

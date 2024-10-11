@@ -22,7 +22,7 @@ To run JSON server:
 npx json-server --watch server/db.json --port 8000
 ```
 
-Add Item page was created just for showcase app routing. I would prefer to make add new item on the same page where there is a list.
+Add Item page same as Item Page was created just for showcase app routing. I would prefer to make add new item on the same page where there is a list.
 
 ## Learn More
 

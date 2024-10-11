@@ -1,12 +1,13 @@
 import { Item } from "@/types/groceries";
 import {
-  Alert,
-  Avatar,
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
+  Checkbox,
+  debounce,
   Dialog,
   DialogActions,
   DialogTitle,
@@ -19,54 +20,126 @@ import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 import CategoryIcon from "@mui/icons-material/Category";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useState } from "react";
-import { useDeleteGroceryItem } from "@/hooks/api-hooks";
-import CheckIcon from '@mui/icons-material/Check';
+import { useCallback, useEffect, useState } from "react";
+import { useDeleteGroceryItem, useUpdateGroceryItem } from "@/hooks/api-hooks";
+import { useRouter } from "next/navigation";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 
 interface ProductProps {
   data: Item;
-  index: number;
+  index?: number;
+  itemMode?: boolean;
 }
 
-export const Product = ({ data, index }: ProductProps) => {
+export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const { name, isFood, amount: savedAmount, isPurchased, id } = data;
-  const [amount, setAmount] = useState(savedAmount);
-  const { deleteItem, isLoading, isSuccess } = useDeleteGroceryItem();
+  const [productData, setProductData] = useState<Item>(data);
+  const { name, isFood, isPurchased, id } = productData;
+  const { deleteItem } = useDeleteGroceryItem();
+  const { updateItem } = useUpdateGroceryItem();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    setProductData(data);
+  }, [data]);
+
+  const handleChange = (updatedItem: Item) => {
+    updateItem({
+      ...updatedItem
+    }, {
+      onSuccess: (item) => {
+        setProductData(item);
+      }
+    })
+  };
+
+  const debouncedHandleChange = useCallback(debounce(handleChange, 300), []);
 
   return (
     <>
       <Card className="flex-1" sx={
-        { backgroundColor: index % 2 === 0 ? "rgba(127, 241, 227, 0.3)" : "rgba(0, 0, 0, 0.08)" }
+        {
+          backgroundColor: index % 2 === 0 ? "rgba(127, 241, 227, 0.3)" : "rgba(0, 0, 0, 0.08)",
+          maxWidth: 600
+        }
       }>
+        {/* Header */}
         <CardHeader
-          avatar={
-            <Avatar aria-label={isFood ? "Food item" : "Non-food item"}>
-              {isFood ? <BakeryDiningIcon /> : <CategoryIcon />}
-            </Avatar>
-          }
-          action={
-            <IconButton aria-label={`Delete ${name}`} title={`Delete ${name}`} onClick={() => setIsConfirmDialogOpen(true)}>
-              <DeleteForeverIcon />
+          action={itemMode ?
+            <IconButton aria-label="Back to list" title="Back to list" onClick={() => router.push('/grocery-list')}>
+              <ExitToAppIcon color="primary" />
+            </IconButton> :
+            <IconButton aria-label={`View ${name}`} title={`View ${name}`}>
+              <RemoveRedEyeIcon />
             </IconButton>
           }
-          title={<Typography variant="h6" color="textPrimary">{name}</Typography>}
+          title={<Typography variant="h5" color="textPrimary" sx={{
+            textDecoration: isPurchased ? "line-through" : 'none'
+          }}>{name}</Typography>}
+          sx={
+            !itemMode ? {
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                cursor: 'pointer',
+              },
+            } : null}
+          onClick={() => !itemMode ? router.push(`/grocery-list/${id}`) : null}
+          className="flex items-center"
         />
-        <Divider />
-        <CardContent>
-          <Typography color="textPrimary" fontWeight={600} marginBottom={2}>Qty {amount}</Typography>
-          <div className="flex gap-2 items-center">
-            <RemoveCircleIcon color="primary" aria-label="Decrease amount" titleAccess="Decrease amount" onClick={() => setAmount(amount - 1)} />
-            <Slider aria-label="Amount" min={0} max={50} step={1} value={amount} valueLabelDisplay="auto" onChange={(_event, value) => setAmount(value as number)} />
-            <AddCircleIcon color="primary" aria-label="Increase amount" titleAccess="Increase amount" onClick={() => setAmount(amount + 1)} />
-          </div>
 
+        <Divider />
+
+        {/* Main content */}
+        <CardContent className="flex gap-4 items-center">
+          <Box className="flex items-center justify-center p-5 bg-gray-200 w-[50px] h-[50px] rounded-full">
+            {isFood ? <BakeryDiningIcon sx={{ fontSize: 40 }} /> : <CategoryIcon />}
+          </Box>
+
+          <Box className="flex-1">
+            <Typography color="textPrimary" fontWeight={600} variant="h6">Qty <span className="text-primary">{productData.amount}</span></Typography>
+            {itemMode && (
+              <div className="flex gap-2 items-center py-3">
+                <RemoveCircleIcon color={isPurchased ? "disabled" : "primary"} aria-label="Decrease amount" titleAccess="Decrease amount"
+                  onClick={() => handleChange({
+                    ...productData,
+                    amount: productData.amount - 1
+                  })}
+                />
+
+                <Slider sx={{
+                  maxWidth: "200px"
+                }}
+                  disabled={isPurchased}
+                  aria-label="Amount" min={0} max={50} step={1} value={productData.amount} valueLabelDisplay="auto"
+                  onChange={(_event, value) => debouncedHandleChange({
+                    ...productData,
+                    amount: value as number
+                  })}
+                />
+
+                <AddCircleIcon color={isPurchased ? "disabled" : "primary"} aria-label="Increase amount" titleAccess="Increase amount"
+                  onClick={() => handleChange({
+                    ...productData,
+                    amount: productData.amount + 1
+                  })}
+                />
+              </div>
+            )}
+          </Box>
         </CardContent>
-        <CardActions className="w-full flex justify-end">
+
+        <Divider />
+
+        {/* Footer */}
+        <CardActions className="w-full flex justify-between">
+          <IconButton aria-label={`Delete ${name}`} title={`Delete ${name}`} onClick={() => setIsConfirmDialogOpen(true)}>
+            <DeleteForeverIcon />
+          </IconButton>
 
           <Button
             size="small"
@@ -78,7 +151,11 @@ export const Product = ({ data, index }: ProductProps) => {
               {isPurchased ? <><DoneAllIcon color="success" />
                 <Typography color="success">You've got it!</Typography></> :
                 <>
-                  <AddShoppingCartIcon color="primary" />
+                  <Checkbox checked={isPurchased}
+                    onChange={() => handleChange({
+                      ...data,
+                      isPurchased: true
+                    })} />
                   <Typography color="primary">Add it!</Typography>
                 </>
               }
@@ -86,6 +163,8 @@ export const Product = ({ data, index }: ProductProps) => {
           </Button>
         </CardActions>
       </Card>
+
+      {/* Confirmation delete modal */}
       <Dialog open={isConfirmDialogOpen} onClose={() => setIsConfirmDialogOpen(false)}
         aria-labelledby="confirm-dialog-title">
         <DialogTitle id="alert-dialog-title">
@@ -98,21 +177,18 @@ export const Product = ({ data, index }: ProductProps) => {
               deleteItem(id, {
                 onSuccess: () => {
                   setIsConfirmDialogOpen(false);
+                  if (itemMode) router.push('/grocery-list/');
+                  // add success alert
                 },
                 onError: (error) => {
                   console.error("Error deleting item:", error);
+                  // add error alert
                 },
               });
             }}
           >Confirm</Button>
         </DialogActions>
-      </Dialog >
-      {isSuccess && (
-        <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-          Deletion was successful.
-        </Alert>
-      )
-      }
+      </Dialog>
     </>
   );
 };

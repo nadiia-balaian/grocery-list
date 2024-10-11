@@ -19,7 +19,7 @@ export const NewItemForm = ({
   } = useForm<Inputs>()
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col py-3 h-full">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col py-7 h-full">
       <Box className="flex flex-col align-top flex-1">
         <Input size="medium" placeholder="apple" {...register("name", {
           required: {
