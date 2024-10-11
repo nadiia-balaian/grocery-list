@@ -5,6 +5,8 @@ import { QueryKeys } from '@/types/queryKeys';
 import { Item } from '@/types/groceries';
 import { SORT_BY } from '@/constants/ui';
 
+const DEFAULT_SORT = "name";
+
 // Hook to fetch the grocery list
 export const useGroceriesList = (sortBy: SORT_BY) => {
   const {data, isError, isLoading, isFetching, isPending} = useQuery<Item[]>({
@@ -29,7 +31,7 @@ export const useAddGroceryItem = () => {
   const mutation = useMutation({
     mutationFn: addItemToGroceriesList,
     onSuccess: (newItem: Item) => {
-      queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
+      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: any) => {
         const updatedItems = [...oldData, newItem];
         return [
           ...updatedItems,
@@ -53,7 +55,7 @@ export const useUpdateGroceryItem = () => {
   const mutation = useMutation({
     mutationFn: updateItemInGroceriesList,
     onSuccess: (updatedItem: Item) => {
-      queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
+      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: any) => {
 
         const updatedItems = oldData.map((item: Item) =>
           item.id === updatedItem.id ? updatedItem : item
@@ -83,7 +85,7 @@ export const useDeleteGroceryItem = () => {
   const mutation = useMutation({
     mutationFn: deleteItemFromGroceriesList,
     onSuccess: (_, itemId: string, onSuccess) => {
-      queryClient.setQueryData([QueryKeys.GROCERIES_LIST], (oldData: any) => {
+      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: any) => {
         const updatedItems = oldData.filter((item: Item) => item.id !== itemId);
 
         return [

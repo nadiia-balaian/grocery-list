@@ -58,7 +58,7 @@ export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
     })
   };
 
-  const debouncedHandleChange = useCallback(debounce(handleChange, 300), []);
+  const debouncedHandleChange = useCallback(debounce(handleChange, 200), []);
 
   return (
     <>
@@ -105,7 +105,7 @@ export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
             {itemMode && (
               <div className="flex gap-2 items-center py-3">
                 <RemoveCircleIcon color={isPurchased ? "disabled" : "primary"} aria-label="Decrease amount" titleAccess="Decrease amount"
-                  onClick={() => handleChange({
+                  onClick={() => debouncedHandleChange({
                     ...productData,
                     amount: productData.amount - 1
                   })}
@@ -123,7 +123,7 @@ export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
                 />
 
                 <AddCircleIcon color={isPurchased ? "disabled" : "primary"} aria-label="Increase amount" titleAccess="Increase amount"
-                  onClick={() => handleChange({
+                  onClick={() => debouncedHandleChange({
                     ...productData,
                     amount: productData.amount + 1
                   })}
