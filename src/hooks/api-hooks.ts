@@ -3,12 +3,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { addItemToGroceriesList, deleteItemFromGroceriesList, getGroceriesList, getGroceryItem, updateItemInGroceriesList } from '@/lib/api';
 import { QueryKeys } from '@/types/queryKeys';
 import { Item } from '@/types/groceries';
+import { SORT_BY } from '@/constants/ui';
 
 // Hook to fetch the grocery list
-export const useGroceriesList = () => {
+export const useGroceriesList = (sortBy: SORT_BY) => {
   const {data, isError, isLoading, isFetching, isPending} = useQuery<Item[]>({
-    queryKey: [QueryKeys.GROCERIES_LIST],
-    queryFn: getGroceriesList,
+    queryKey: [QueryKeys.GROCERIES_LIST, sortBy],
+    queryFn: () => getGroceriesList(sortBy),
     staleTime: 30000,
     refetchInterval: 30000,
   });
@@ -101,6 +102,8 @@ export const useDeleteGroceryItem = () => {
   }
 };
 
+
+// Hook to get one item by id
 export const useGetGroceryItem = (id: string) => {
   const { data: item, isLoading, isPending, isFetching, error, isError } = useQuery<Item>({
     queryKey: ['groceryItem', id],

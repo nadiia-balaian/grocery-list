@@ -1,10 +1,11 @@
 import { BASE_URL } from "@/constants/default";
+import { SORT_BY } from "@/constants/ui";
 import { Item } from "@/types/groceries";
 import exp from "constants";
 
-// TODO: add filtering by isPurchased or/and pagination and sort by type/name
-export const getGroceriesList = async (): Promise<Item[]> => {
-  return apiService.get('items');
+// TODO: add filtering and pagination
+export const getGroceriesList = async (sort?: SORT_BY): Promise<Item[]> => {
+  return apiService.get(`items?_sort=${sort}`);
 };
 
 export const getGroceryItem = async (itemId: string): Promise<Item> => {
