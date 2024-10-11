@@ -60,9 +60,7 @@ export const useUpdateGroceryItem = () => {
         const updatedItems = oldData.map((item: Item) =>
           item.id === updatedItem.id ? updatedItem : item
         );
-
-        console.log(updatedItems)
-
+        
         return [
           ...updatedItems
         ];
