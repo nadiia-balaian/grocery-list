@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 const AddItem: React.FC = () => {
-  const { addItem, isLoading } = useAddGroceryItem();
+  const { addItem } = useAddGroceryItem();
   const router = useRouter();
 
   const handleAddItem = ({
@@ -34,7 +34,7 @@ const AddItem: React.FC = () => {
       onSuccess: () => {
         router.push('/grocery-list');
       },
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         console.error('Error adding item:', error);
       },
     });

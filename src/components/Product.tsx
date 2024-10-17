@@ -22,25 +22,27 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDeleteGroceryItem, useUpdateGroceryItem } from "@/hooks/api-hooks";
 import { useRouter } from "next/navigation";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { SORT_BY } from "@/constants/ui";
 
 
 interface ProductProps {
   data: Item;
   index?: number;
   itemMode?: boolean;
+  sortBy?: SORT_BY;
 }
 
-export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
+export const Product = ({ data, index = 1, itemMode, sortBy = "name" }: ProductProps) => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [productData, setProductData] = useState<Item>(data);
   const { name, isFood, isPurchased, id } = productData;
   const { deleteItem } = useDeleteGroceryItem();
-  const { updateItem } = useUpdateGroceryItem();
+  const { updateItem } = useUpdateGroceryItem({ sort: sortBy });
 
   const router = useRouter();
 
@@ -48,7 +50,7 @@ export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
     setProductData(data);
   }, [data]);
 
-  const handleChange = (updatedItem: Item) => {
+  const handleChange = useCallback((updatedItem: Item) => {
     updateItem({
       ...updatedItem
     }, {
@@ -56,9 +58,9 @@ export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
         setProductData(item);
       }
     })
-  };
+  }, []);
 
-  const debouncedHandleChange = useCallback(debounce(handleChange, 200), []);
+  const debouncedHandleChange = useMemo(() => debounce(handleChange, 200), [handleChange]);
 
   return (
     <>
@@ -107,7 +109,7 @@ export const Product = ({ data, index = 1, itemMode }: ProductProps) => {
                 <RemoveCircleIcon color={isPurchased ? "disabled" : "primary"} aria-label="Decrease amount" titleAccess="Decrease amount"
                   onClick={() => debouncedHandleChange({
                     ...productData,
-                    amount: productData.amount - 1
+                    amount: (productData.amount - 1) < 1 ? 1 : productData.amount - 1
                   })}
                 />
 

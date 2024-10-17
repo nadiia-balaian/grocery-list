@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ThemeProvider, useColorScheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { Roboto } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import theme from "@/theme";

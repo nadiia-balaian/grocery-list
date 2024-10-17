@@ -31,7 +31,7 @@ export const useAddGroceryItem = () => {
   const mutation = useMutation({
     mutationFn: addItemToGroceriesList,
     onSuccess: (newItem: Item) => {
-      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: any) => {
+      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: Item[]) => {
         const updatedItems = [...oldData, newItem];
         return [
           ...updatedItems,
@@ -49,22 +49,43 @@ export const useAddGroceryItem = () => {
 };
 
 // Hook to update an item in the grocery list
-export const useUpdateGroceryItem = () => {
+export const useUpdateGroceryItem = ({
+  sort
+}: {sort: SORT_BY}) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: updateItemInGroceriesList,
-    onSuccess: (updatedItem: Item) => {
-      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: any) => {
+    onMutate: async (newItem: Item) => {
+      await queryClient.cancelQueries({ queryKey: [QueryKeys.GROCERIES_LIST] })
+      const previousItems = queryClient.getQueryData([QueryKeys.GROCERIES_LIST, sort]);
 
+      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, sort], (oldData: Item[]) => {
         const updatedItems = oldData.map((item: Item) =>
-          item.id === updatedItem.id ? updatedItem : item
+          item.id === newItem.id ? newItem : item
         );
-        
-        return [
-          ...updatedItems
-        ];
+        return updatedItems;
       });
+
+      return { previousItems };
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData([QueryKeys.GROCERIES_LIST], context?.previousItems as Item[]);
+    },
+    // onSuccess: (updatedItem: Item) => {
+    //   queryClient.setQueryData([QueryKeys.GROCERIES_LIST, sort], (oldData: Item[]) => {
+
+    //     const updatedItems = oldData.map((item: Item) =>
+    //       item.id === updatedItem.id ? updatedItem : item
+    //     );
+
+    //     return [
+    //       ...updatedItems
+    //     ];
+    //   });
+    // },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.GROCERIES_LIST] })
     },
   });
 
@@ -82,15 +103,8 @@ export const useDeleteGroceryItem = () => {
 
   const mutation = useMutation({
     mutationFn: deleteItemFromGroceriesList,
-    onSuccess: (_, itemId: string, onSuccess) => {
-      queryClient.setQueryData([QueryKeys.GROCERIES_LIST, DEFAULT_SORT], (oldData: any) => {
-        const updatedItems = oldData.filter((item: Item) => item.id !== itemId);
-
-        return [
-          ...updatedItems,
-        ];
-      });
-     
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.GROCERIES_LIST]});     
     },
   });
 

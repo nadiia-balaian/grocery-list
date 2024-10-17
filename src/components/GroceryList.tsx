@@ -41,7 +41,7 @@ export const GroceryList = () => {
       return (
         <div className="flex items-center justify-center min-h-full gap-4">
           <ProductionQuantityLimitsIcon fontSize="large" color="success" />
-          <Typography color="success" variant="h5">No items found.<br /> It looks like you've already bought everything you need!</Typography>
+          <Typography color="success" variant="h5">No items found.<br /> It looks like you&apos;ve already bought everything you need!</Typography>
         </div>
       );
     }
@@ -57,8 +57,8 @@ export const GroceryList = () => {
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SORT_BY)}
           >
-            {SORT_BY_VALUES.map((i) =>
-              <MenuItem value={i.value}>{i.description}</MenuItem>
+            {SORT_BY_VALUES.map((i, index) =>
+              <MenuItem value={i.value} key={index}>{i.description}</MenuItem>
             )}
           </Select>
         </Box>
@@ -66,7 +66,7 @@ export const GroceryList = () => {
           {data?.map((item, index) => (
             <ListItem key={item.id} className="flex gap-4">
               <div className="rounded-full bg-primary text-gray-50 w-[30px] h-[30px] flex items-center justify-center">{index + 1}</div>
-              <Product data={item} index={index} />
+              <Product data={item} index={index} sortBy={sortBy} />
             </ListItem>
           ))}
         </List>

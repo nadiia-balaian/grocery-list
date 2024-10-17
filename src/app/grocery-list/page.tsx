@@ -1,8 +1,8 @@
 'use client';
 import { GroceryList } from '@/components/GroceryList';
-import { Box, IconButton, Modal, Paper, Typography } from '@mui/material';
+import { IconButton, Paper, Typography } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
 const GroceriesPage = () => {

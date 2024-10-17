@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControlLabel, Input, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Input, Typography } from "@mui/material";
 import { useForm, SubmitHandler } from "react-hook-form"
 
 type Inputs = {

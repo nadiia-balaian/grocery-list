@@ -1,7 +1,6 @@
 import { BASE_URL } from "@/constants/default";
 import { SORT_BY } from "@/constants/ui";
 import { Item } from "@/types/groceries";
-import exp from "constants";
 
 // TODO: add filtering and pagination
 export const getGroceriesList = async (sort?: SORT_BY): Promise<Item[]> => {
@@ -33,6 +32,7 @@ export const apiService = {
     return response.json();
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async post<T>(path: string, body: any): Promise<T> {
     const response = await fetch(`${BASE_URL}/${path}`, {
       method: 'POST',
@@ -46,7 +46,7 @@ export const apiService = {
     }
     return response.json();
   },
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   async put<T>(path: string, body: any): Promise<T> {
     const response = await fetch(`${BASE_URL}/${path}`, {
       method: 'PUT',
